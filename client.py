@@ -1,27 +1,19 @@
 import socket
-
-
-def client_program():
+def Client():
     host = socket.gethostname()  
-    port = 12345 
-    servaddrport=("10.12.80.199",port)
+    port = 5000  
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+    client_socket.connect((host, port))  
+    req=input("Enter 'sum x y' to find sum, or 'negate x' to find negative of a number.\nEnter 'bye' to quit\n")
+    while req!='bye':
+        client_socket.send(req.encode())#sends request prompt to the server  
+        data = client_socket.recv(1024).decode() #receive result from the server
+        print("The result is:")
+        print(data)
+        req=input("Enter 'sum x y' to find sum, or 'negate x' to find negative of a number\n")
 
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # instantiate
-    #client_socket.connect(servaddrport)  
-    msg = ""
-    while msg != "Exit":
-        msg = input("Client says: ")
-
-        if msg == "Exit":
-            client_socket.sendto("Exit".encode(), servaddrport)
-            break
-    client_socket.sendto(msg.encode(), servaddrport)
-
-    msg, addr = client_socket.recvfrom(1024)
-    print("Server says: ", msg.decode())
-
-    client_socket.close()
+    client_socket.close()  
 
 
 if __name__ == '__main__':
-    client_program()
+    Client()
